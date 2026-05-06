@@ -52,16 +52,19 @@ def normalize_date(value):
 
 
 def collect_discord(records, target_date):
+    print("디스코드 총 데이터:", len(records))
     print("디스코드 수집 시간 샘플:", records[0].get("수집 시간") if records else "없음")
     print("target_date:", target_date)
 
     items = []
 
-    for row in records:
+    for i, row in enumerate(records):
         raw_date = row.get("수집 시간")
         date = normalize_date(raw_date)
 
-        print("원본:", raw_date, "→ 변환:", date)
+        # ✅ 로그 폭주 방지: 앞 10개만 출력
+        if i < 10:
+            print("원본:", raw_date, "→ 변환:", date)
 
         if date != target_date:
             continue
@@ -78,6 +81,8 @@ def collect_discord(records, target_date):
             "키워드": keyword,
             "내용": message,
         })
+
+    print("디스코드 필터 후 데이터:", len(items))
 
     return items
 

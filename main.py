@@ -9,7 +9,7 @@ from config import (
     FLOOR_SHEET,
 )
 from sheets import get_records, append_summary
-from summary import summarize_with_ai, split_summary
+from summary import summarize_with_ai
 
 
 # ✅ 오늘
@@ -176,18 +176,11 @@ def main():
 
     print("=== AI 요약 완료 ===")
 
-    sections = split_summary(result)
-
     created_at = datetime.now(ZoneInfo(TIMEZONE)).strftime("%Y-%m-%d %H:%M:%S")
 
     append_summary([
         target_date,
-        sections.get("디스코드 요약", ""),
-        sections.get("부정 동향 요약", ""),
-        sections.get("플로어 동향 요약", ""),
-        sections.get("종합 요약", ""),
-        sections.get("주요 이슈 TOP 5", ""),
-        sections.get("운영 대응 추천", ""),
+        result,
         created_at,
     ])
 

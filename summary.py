@@ -42,6 +42,7 @@ def summarize_with_ai(target_date, discord_items, negative_items, floor_items):
 - 데이터에 없는 내용을 추측하지 말 것
 - 같은 이슈는 묶어서 요약할 것
 - 게임 운영 리포트 문체로 작성할 것
+- 데이터가 없는 경우 "관련 데이터 없음"으로 간결하게 표현할 것
 
 ====================
 [디스코드 데이터]

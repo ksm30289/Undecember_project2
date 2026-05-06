@@ -8,41 +8,50 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 def summarize_with_ai(target_date, discord_items, negative_items, floor_items):
     prompt = f"""
-너는 게임 운영 담당자를 위한 동향 요약 AI야.
-대상 게임은 언디셈버야.
+너는 게임 운영 리포트를 작성하는 담당자야.
+보고 대상은 개발팀 및 사업팀이야.
 
-아래 수집 데이터를 바탕으로 {target_date} 일별 동향을 요약해줘.
+목표:
+- 실제 의사결정에 도움이 되는 팀 공유용 운영 리포트 작성
+- 반복 이슈는 묶어서 정리
+- 데이터에 없는 내용은 추측하지 않기
+- 감정 표현은 줄이고 객관적으로 작성
 
-출력 형식은 반드시 아래 형식을 지켜줘.
+반드시 아래 형식을 지켜서 작성해줘.
 
-[디스코드 요약]
-- 핵심만 3~5줄
+📊 언디셈버 운영 리포트 ({target_date})
 
-[부정 동향 요약]
-- 핵심만 3~5줄
+[1. 전체 요약]
+- 
 
-[플로어 동향 요약]
-- 핵심만 3~5줄
-
-[종합 요약]
-- 전체 분위기와 주요 이슈를 3~5줄
-
-[주요 이슈 TOP 5]
+[2. 주요 이슈 TOP 5]
 1.
 2.
 3.
 4.
 5.
 
-[운영 대응 추천]
-- 운영자가 확인하거나 대응하면 좋은 항목을 bullet로 정리
+[3. 채널별 분석]
 
-주의사항:
-- 과장하지 말 것
-- 데이터에 없는 내용을 추측하지 말 것
-- 같은 이슈는 묶어서 요약할 것
-- 게임 운영 리포트 문체로 작성할 것
-- 데이터가 없는 경우 "관련 데이터 없음"으로 간결하게 표현할 것
+(1) 디스코드
+- 
+
+(2) 부정 동향
+- 
+
+(3) 플로어
+- 
+
+[4. 유저 반응 분석]
+- 
+
+[5. 운영 대응 가이드]
+- 지금 당장 확인할 것:
+- 추적할 것:
+- 공유가 필요한 것:
+
+[6. 리스크 알림]
+- 
 
 ====================
 [디스코드 데이터]
@@ -76,37 +85,11 @@ def summarize_with_ai(target_date, discord_items, negative_items, floor_items):
 
 
 def split_summary(text):
-    sections = {
+    return {
         "디스코드 요약": "",
         "부정 동향 요약": "",
         "플로어 동향 요약": "",
-        "종합 요약": "",
+        "종합 요약": text,
         "주요 이슈 TOP 5": "",
         "운영 대응 추천": "",
     }
-
-    current = None
-    lines = []
-
-    for line in text.splitlines():
-        clean = line.strip()
-
-        matched = None
-        for key in sections.keys():
-            if clean.startswith(f"[{key}]"):
-                matched = key
-                break
-
-        if matched:
-            if current:
-                sections[current] = "\n".join(lines).strip()
-            current = matched
-            lines = []
-        else:
-            if current:
-                lines.append(line)
-
-    if current:
-        sections[current] = "\n".join(lines).strip()
-
-    return sections

@@ -25,19 +25,44 @@ def normalize_date(value):
         return ""
 
     text = text.replace(".", "-").replace("/", "-")
+    text = text.replace("년", "-").replace("월", "-").replace("일", "")
+    text = text.replace("오전", "").replace("오후", "")
+    text = " ".join(text.split())
 
-    # 예: 2026-05-06 10:30:00
-    if len(text) >= 10 and text[:4].isdigit():
-        return text[:10]
+    import re
+
+    # 2026-05-06 / 2026-5-6 / 2026. 05. 06 대응
+    match = re.search(r"(\d{4})\D+(\d{1,2})\D+(\d{1,2})", text)
+    if match:
+        y, m, d = match.groups()
+        return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
+
+    # 05-06 처럼 연도 없는 경우는 올해 기준
+    match = re.search(r"(\d{1,2})\D+(\d{1,2})", text)
+    if match:
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        from config import TIMEZONE
+
+        m, d = match.groups()
+        y = datetime.now(ZoneInfo(TIMEZONE)).year
+        return f"{y:04d}-{int(m):02d}-{int(d):02d}"
 
     return text[:10]
 
 
 def collect_discord(records, target_date):
+    print("디스코드 수집 시간 샘플:", records[0].get("수집 시간") if records else "없음")
+    print("target_date:", target_date)
+
     items = []
 
     for row in records:
-        date = normalize_date(row.get("수집 시간"))
+        raw_date = row.get("수집 시간")
+        date = normalize_date(raw_date)
+
+        print("원본:", raw_date, "→ 변환:", date)
+
         if date != target_date:
             continue
 

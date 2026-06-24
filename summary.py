@@ -40,10 +40,7 @@ def summarize_with_ai(
 (1) 디스코드
 - 
 
-(2) 부정 동향
-- 
-
-(3) 플로어
+(2) 커뮤니티(DC/FLOOR)
 - 
 
 [4. 유저 반응 분석]
@@ -62,12 +59,8 @@ def summarize_with_ai(
 {discord_items if discord_items else "데이터 없음"}
 
 ====================
-[부정 동향 데이터]
-{negative_items if negative_items else "데이터 없음"}
-
-====================
-[플로어 데이터]
-{floor_items if floor_items else "데이터 없음"}
+[커뮤니티 데이터]
+{community_items if negative_items else "데이터 없음"}
 """
 
     response = client.chat.completions.create(
@@ -91,8 +84,7 @@ def summarize_with_ai(
 def split_summary(text):
     return {
         "디스코드 요약": "",
-        "부정 동향 요약": "",
-        "플로어 동향 요약": "",
+        "커뮤니티 요약": "",
         "종합 요약": text,
         "주요 이슈 TOP 5": "",
         "운영 대응 추천": "",

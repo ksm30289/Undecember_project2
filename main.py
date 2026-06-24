@@ -99,13 +99,20 @@ def collect_community(records, target_date):
         if date != target_date:
             continue
 
+        summary = str(
+            row.get("AI요약", "")
+        ).strip()
+
+        if not summary:
+            continue
+
         items.append({
             "출처": str(row.get("출처", "")).strip(),
             "감성": str(row.get("감성", "")).strip(),
             "주제": str(row.get("주제", "")).strip(),
             "대표이슈": str(row.get("대표 이슈", "")).strip(),
             "영향도": str(row.get("영향도", "")).strip(),
-            "AI요약": str(row.get("AI요약", "")).strip(),
+            "AI요약": summary,
             "제목": str(row.get("제목", "")).strip(),
         })
 

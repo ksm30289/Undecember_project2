@@ -21,6 +21,12 @@ def summarize_with_ai(
 - 데이터에 없는 내용은 추측하지 않기
 - 감정 표현은 줄이고 객관적으로 작성
 
+추가 규칙:
+- 커뮤니티 데이터에는 이미 AI 분석 결과가 포함되어 있다.
+- 감성, 주제, 대표이슈, 영향도, AI요약을 우선적으로 활용한다.
+- 대표이슈가 동일한 데이터는 하나의 이슈로 묶어서 분석한다.
+- 질문글과 거래글은 주요 리스크로 과장하지 않는다.
+
 반드시 아래 형식을 지켜서 작성해줘.
 
 📊 언디셈버 운영 리포트 ({target_date})
@@ -41,7 +47,8 @@ def summarize_with_ai(
 - 
 
 (2) 커뮤니티(DC/FLOOR)
-- 
+- DC 주요 동향
+- FLOOR 주요 동향
 
 [4. 유저 반응 분석]
 - 
@@ -60,7 +67,7 @@ def summarize_with_ai(
 
 ====================
 [커뮤니티 데이터]
-{community_items if negative_items else "데이터 없음"}
+{community_items if community_items else "데이터 없음"}
 """
 
     response = client.chat.completions.create(

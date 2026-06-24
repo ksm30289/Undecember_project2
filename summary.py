@@ -6,7 +6,11 @@ from config import OPENAI_API_KEY, OPENAI_MODEL
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-def summarize_with_ai(target_date, discord_items, negative_items, floor_items):
+def summarize_with_ai(
+    target_date,
+    discord_items,
+    community_items
+):
     prompt = f"""
 너는 게임 운영 리포트를 작성하는 담당자야.
 보고 대상은 개발팀 및 사업팀이야.

@@ -5,8 +5,7 @@ from config import (
     TARGET_DATE,
     TIMEZONE,
     DISCORD_SHEET,
-    NEGATIVE_SHEET,
-    FLOOR_SHEET,
+    COMMUNITY_SHEET,
 )
 from sheets import get_records, append_summary
 from summary import summarize_with_ai
@@ -87,51 +86,27 @@ def collect_discord(records, target_date):
     return items
 
 
-# ✅ 부정 동향
-def collect_negative(records, target_date):
+def collect_community(records, target_date):
+
     items = []
 
     for row in records:
-        date = normalize_date(row.get("수집일자"))
+
+        date = normalize_date(
+            row.get("게시일")
+        )
+
         if date != target_date:
             continue
 
-        title = str(row.get("제목", "")).strip()
-        body = str(row.get("본문", "")).strip()
-        keyword = str(row.get("키워드", "")).strip()
-
-        if not title and not body:
-            continue
-
         items.append({
-            "키워드": keyword,
-            "제목": title,
-            "본문": body,
-        })
-
-    return items
-
-
-# ✅ 플로어
-def collect_floor(records, target_date):
-    items = []
-
-    for row in records:
-        date = normalize_date(row.get("수집일자"))
-        if date != target_date:
-            continue
-
-        title = str(row.get("제목", "")).strip()
-        category = str(row.get("분류", "")).strip()
-        keyword = str(row.get("매칭 키워드", "")).strip()
-
-        if not title:
-            continue
-
-        items.append({
-            "분류": category,
-            "키워드": keyword,
-            "제목": title,
+            "출처": str(row.get("출처", "")).strip(),
+            "감성": str(row.get("감성", "")).strip(),
+            "주제": str(row.get("주제", "")).strip(),
+            "대표이슈": str(row.get("대표 이슈", "")).strip(),
+            "영향도": str(row.get("영향도", "")).strip(),
+            "AI요약": str(row.get("AI요약", "")).strip(),
+            "제목": str(row.get("제목", "")).strip(),
         })
 
     return items
@@ -149,19 +124,27 @@ def main():
     print(f"요약 대상 날짜: {target_date}")
 
     discord_records = get_records(DISCORD_SHEET)
-    negative_records = get_records(NEGATIVE_SHEET)
-    floor_records = get_records(FLOOR_SHEET)
+    community_records = get_records(
+        COMMUNITY_SHEET
+    )
+
+    community_items = limit_items(
+        collect_community(
+            community_records,
+            target_date
+        )
+    )
 
     discord_items = limit_items(collect_discord(discord_records, target_date))
-    negative_items = limit_items(collect_negative(negative_records, target_date))
-    floor_items = limit_items(collect_floor(floor_records, target_date))
 
     print("=== 데이터 수집 완료 ===")
     print("디스코드:", len(discord_items))
-    print("부정:", len(negative_items))
-    print("플로어:", len(floor_items))
+    print(
+        "커뮤니티:",
+        len(community_items)
+    )
 
-    if not discord_items and not negative_items and not floor_items:
+    if not discord_items and not community_items:
         print("요약할 데이터가 없습니다.")
         return
 
@@ -170,8 +153,7 @@ def main():
     result = summarize_with_ai(
         target_date=target_date,
         discord_items=discord_items,
-        negative_items=negative_items,
-        floor_items=floor_items,
+        community_items=community_items,
     )
 
     print("=== AI 요약 완료 ===")
